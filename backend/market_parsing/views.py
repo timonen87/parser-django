@@ -1,19 +1,21 @@
 from email.headerregistry import Group
+from uuid import uuid4
+
+from core.settings import EMAIL_HOST_USER
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.shortcuts import render
-from rest_framework import generics, viewsets, parsers, views, permissions
-from . import models, serializer
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from django.utils.datastructures import MultiValueDictKeyError
+from rest_framework import (generics, parsers, permissions, status, views,
+                            viewsets)
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from . import models, serializer
 from .models import *
 from .serializer import *
-from django.contrib.auth.models import User
-from rest_framework import status
-from uuid import uuid4
-from django.core.mail import send_mail
-from core.settings import EMAIL_HOST_USER
-from django.utils.datastructures import MultiValueDictKeyError
 
 
 class TokenGet(APIView):
@@ -23,6 +25,7 @@ class TokenGet(APIView):
             return Response({"token": "exists"}, status=status.HTTP_200_OK)
         except Token.DoesNotExist:
             return Response({"token": "not exists"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class CheckEmail(APIView):

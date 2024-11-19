@@ -1,12 +1,14 @@
 import os
-from django.core.management.base import BaseCommand
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+
 from core.settings import BASE_DIR, DIV_CLASS, EMAIL_HOST_USER
-from ...models import *
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.core.management.base import BaseCommand
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+from ...models import *
 
 
 class Command(BaseCommand):
@@ -58,8 +60,9 @@ class Command(BaseCommand):
                 # pars_price = price[0].split(" ₽")[0].replace(" ", "")
                 pars_price = (
                     price.replace("Цена с картой Яндекс Пэй:", "")
-                    .replace(" ₽", "")
                     .replace("/n", "")
+                    .replace("₽", "")
+                    .replace("\u2009", "")
                     .strip()
                 )
 
@@ -84,47 +87,49 @@ class Command(BaseCommand):
                 # subject, message = "Ошибка парсинга", f"Ошибка при парсинге ссылки: {obj.link} \n Лог ошибки {quetstion_func}"
                 # send_mail( subject,message, EMAIL_HOST_USER, [EMAIL_HOST_USER], fail_silently=False,)
             else:
-                last_price = PriceLink.objects.filter(price_link_id=obj.id)
-                if len(last_price) != 0:
-                    if (
-                        int(last_price[len(last_price) - 1].price)
-                        != int(quetstion_func)
-                    ) == True:
-                        # subject, message = "Изменение цены", f"Изменилась цена товара по ссылке: {obj.link}\nБыла {last_price[len(last_price)-1].price}₽, стала {pars_price}₽"
-                        # send_mail( subject,message, EMAIL_HOST_USER, [email], fail_silently=False,)
-                        PriceLink.objects.create(
-                            price_link_id=obj.id, price=quetstion_func
-                        )
-                else:
+                # last_price = PriceLink.objects.filter(price_link_id=obj.id)
+                
+                PriceLink.objects.create(price_link_id=obj.id, price=quetstion_func)
+                # if len(last_price) != 0:
+                #     if (
+                #         int(last_price[len(last_price) - 1].price)
+                #         != int(quetstion_func)
+                #     ) == True:
+                #         # subject, message = "Изменение цены", f"Изменилась цена товара по ссылке: {obj.link}\nБыла {last_price[len(last_price)-1].price}₽, стала {pars_price}₽"
+                #         # send_mail( subject,message, EMAIL_HOST_USER, [email], fail_silently=False,)
+                #         PriceLink.objects.create(
+                #             price_link_id=obj.id, price=quetstion_func
+                #         )
+                # else:
                     # subject, message = "Добавление товара на парсинг", f"Добавлен товар на парсинг: {obj.link}\nТекущая цена {pars_price}₽"
                     # send_mail( subject,message, EMAIL_HOST_USER, [email], fail_silently=False,)
-                    PriceLink.objects.create(price_link_id=obj.id, price=quetstion_func)
+                    # PriceLink.objects.create(price_link_id=obj.id, price=quetstion_func)
 
-        print("Аналогичные товары")
-        links = AnalogLink.objects.all()
-        for obj in links:
-            # print(parser_yandex_market(obj.link))
-            quetstion_func = parser_yandex_market(obj.link)
-            if "error" in quetstion_func:
-                print(quetstion_func)
-                # subject, message = "Ошибка парсинга", f"Ошибка при парсинге ссылки: {obj.link} \n Лог ошибки {quetstion_func}"
-                # send_mail( subject,message, EMAIL_HOST_USER, [EMAIL_HOST_USER], fail_silently=False,)
-            else:
-                last_price = AnalogLinkPrice.objects.filter(analog_link_price_id=obj.id)
-                if len(last_price) != 0:
-                    if (
-                        int(last_price[len(last_price) - 1].analog_price)
-                        != int(quetstion_func)
-                    ) == True:
-                        # subject, message = "Изменение цены", f"Изменилась цена товара по ссылке: {obj.link}\nБыла {last_price[len(last_price)-1].price}₽, стала {pars_price}₽"
-                        # send_mail( subject,message, EMAIL_HOST_USER, [email], fail_silently=False,)
-                        AnalogLinkPrice.objects.create(
-                            analog_link_price_id=obj.id, analog_price=quetstion_func
-                        )
-                else:
-                    # subject, message = "Добавление товара на парсинг", f"Добавлен товар на парсинг: {obj.link}\nТекущая цена {pars_price}₽"
-                    # send_mail( subject,message, EMAIL_HOST_USER, [email], fail_silently=False,)
-                    AnalogLinkPrice.objects.create(
-                        analog_link_price_id=obj.id, analog_price=quetstion_func
-                    )
+        # print("Аналогичные товары")
+        # links = AnalogLink.objects.all()
+        # for obj in links:
+        #     # print(parser_yandex_market(obj.link))
+        #     quetstion_func = parser_yandex_market(obj.link)
+        #     if "error" in quetstion_func:
+        #         print(quetstion_func)
+        #         # subject, message = "Ошибка парсинга", f"Ошибка при парсинге ссылки: {obj.link} \n Лог ошибки {quetstion_func}"
+        #         # send_mail( subject,message, EMAIL_HOST_USER, [EMAIL_HOST_USER], fail_silently=False,)
+        #     else:
+        #         last_price = AnalogLinkPrice.objects.filter(analog_link_price_id=obj.id)
+        #         if len(last_price) != 0:
+        #             if (
+        #                 int(last_price[len(last_price) - 1].analog_price)
+        #                 != int(quetstion_func)
+        #             ) == True:
+        #                 # subject, message = "Изменение цены", f"Изменилась цена товара по ссылке: {obj.link}\nБыла {last_price[len(last_price)-1].price}₽, стала {pars_price}₽"
+        #                 # send_mail( subject,message, EMAIL_HOST_USER, [email], fail_silently=False,)
+        #                 AnalogLinkPrice.objects.create(
+        #                     analog_link_price_id=obj.id, analog_price=quetstion_func
+        #                 )
+        #         else:
+        #             # subject, message = "Добавление товара на парсинг", f"Добавлен товар на парсинг: {obj.link}\nТекущая цена {pars_price}₽"
+        #             # send_mail( subject,message, EMAIL_HOST_USER, [email], fail_silently=False,)
+        #             AnalogLinkPrice.objects.create(
+        #                 analog_link_price_id=obj.id, analog_price=quetstion_func
+        #             )
         self.stdout.write("Закончен процесс парсинга")
