@@ -46,6 +46,7 @@ class Command(BaseCommand):
             driver = webdriver.Chrome(
                 executable_path="/usr/local/bin/chromedriver", chrome_options=options
             )
+            # Путь до драйвера на локальной машине))
             return driver
 
         def parser_yandex_market(link):

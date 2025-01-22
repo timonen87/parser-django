@@ -4,8 +4,8 @@ from . import views
 
 router = routers.SimpleRouter()
 
-router.register(r'user', views.UserViewSet)
-router.register(r'password', views.ChangePasswordView)
+# router.register(r'user', views.UserViewSet)
+# router.register(r'password', views.ChangePasswordView)
 
 urlpatterns = [
     path("", include(router.urls)),

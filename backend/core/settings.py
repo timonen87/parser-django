@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'import_export',
     'djoser',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    
 
     #social media https://www.youtube.com/watch?v=ix3DlB48d1g
     'oauth2_provider',
@@ -52,7 +54,11 @@ INSTALLED_APPS = [
     'rest_framework_social_oauth2',
     'market_parsing',
     'corsheaders',
+    
+    
 ]
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -118,6 +124,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
